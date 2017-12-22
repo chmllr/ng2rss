@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sync/atomic"
 	"time"
 
 	"github.com/gorilla/feeds"
@@ -16,11 +17,11 @@ const (
 	interval = 60 * time.Minute
 )
 
-var rss = ""
+var rss atomic.Value
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, "%s", rss)
+	fmt.Fprintf(w, "%s", rss.Load().(string))
 }
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
 			if newRss, err := feed(); err != nil {
 				log.Println(err)
 			} else {
-				rss = newRss
+				rss.Store(newRss)
 			}
 			time.Sleep(interval)
 		}
