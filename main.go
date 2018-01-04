@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"sync/atomic"
 	"time"
 
@@ -36,7 +37,7 @@ func main() {
 		}
 	}()
 	http.HandleFunc("/", handler)
-	http.ListenAndServe(":9090", nil)
+	http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 }
 
 type story struct {
